@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:simply_notes_app/models/notes_operation.dart';
 import 'package:simply_notes_app/screen/home.dart';
 
 void main() {
@@ -12,12 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NotesOperation>(
-      create: (context) => NotesOperation(),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Home(),
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Home(),
     );
   }
 }

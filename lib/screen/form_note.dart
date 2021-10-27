@@ -1,21 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:simply_notes_app/models/notes_operation.dart';
+import 'package:simply_notes_app/helper/sql_helper.dart';
 
-class AddNote extends StatelessWidget {
-  const AddNote({Key? key}) : super(key: key);
+class FormNote extends StatelessWidget {
+  final dynamic id;
+  final dynamic title;
+  final dynamic description;
+
+  const FormNote({
+    Key? key,
+    this.id,
+    this.title,
+    this.description,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String titleText = '';
-    String descriptionText = '';
+    TextEditingController titleController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+
+    if (id != null) {
+      titleController.text = title;
+      descriptionController.text = description;
+    }
+
+    // Insert a new note to the database
+    Future<void> addItem() async {
+      await SQLHelper.createItem(
+        titleController.text,
+        descriptionController.text,
+      );
+    }
+
+    // Update an existing note
+    Future<void> updateItem(int id) async {
+      await SQLHelper.updateItem(
+        id,
+        titleController.text,
+        descriptionController.text,
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
         title: Text(
-          'Add Notes',
+          id == null ? 'Add Notes' : 'Edit Notes',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
             fontSize: 21,
@@ -35,6 +65,7 @@ class AddNote extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: titleController,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Title',
@@ -49,12 +80,10 @@ class AddNote extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
-              onChanged: (value) {
-                titleText = value;
-              },
             ),
             Expanded(
               child: TextField(
+                controller: descriptionController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Enter Description',
@@ -69,20 +98,19 @@ class AddNote extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),
-                onChanged: (value) {
-                  descriptionText = value;
-                },
               ),
             ),
             TextButton(
-              onPressed: () {
-                Provider.of<NotesOperation>(
-                  context,
-                  listen: false,
-                ).addNewNote(
-                  titleText,
-                  descriptionText,
-                );
+              onPressed: () async {
+                if (id == null) {
+                  await addItem();
+                } else {
+                  await updateItem(id);
+                }
+
+                titleController.text = '';
+                descriptionController.text = '';
+
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(
@@ -95,10 +123,10 @@ class AddNote extends StatelessWidget {
                 backgroundColor: Colors.white,
               ),
               child: Text(
-                'Add Note',
+                id == null ? 'Save Note' : 'Update Note',
                 style: GoogleFonts.poppins(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                   color: Colors.blueGrey,
                 ),
               ),
