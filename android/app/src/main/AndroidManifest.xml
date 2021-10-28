@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.simply_notes_app">
    <application
-        android:label="simply_notes_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Simply Notes"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
